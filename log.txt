@@ -402,3 +402,17 @@
 1709197427541: GET /fetchAllNotes
 1709197430901: GET /fetchTotalSalary
 1709197430903: GET /fetchCurrentMonthRecord
+1709208587127: POST /loginCheck
+1709208587330: GET /getNoteCount
+1709208587331: GET /getAlertCount
+1709208589434: GET /fetchUserDetails
+1709208589441: GET /fetchAlerts
+1709208589443: GET /fetchNotes
+1709208589444: GET /fetchCurrentMonthRecord
+1709208589574: GET /fetchAlerts
+1709208589626: GET /fetchNotes
+1709208589628: GET /fetchCurrentMonthRecord
+1709208595689: GET /fetchAllAlerts
+1709208598800: GET /fetchAllNotes
+1709208602044: GET /fetchTotalSalary
+1709208602046: GET /fetchCurrentMonthRecord
