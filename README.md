@@ -9,4 +9,9 @@ The key features implemented in it are
 2. We can create notes and Alerts on this website where if an alert is created mail is sent with the user's mail with the Google Calendar remainder integration and if there is any update mail in the alert then a new mail with new Google Calendar updated details are sent.
 3. For security data communication JWT token is utilized.
 4. The Spent Analysis feature is automatically handled for the change in a month and fetches the current month's spent with a pie chat representation for the spent. we can add different scents which will be automatically changed in both table and pie chat.
-5. This is a dynamic and responsive website for laptop, and mobile applications.
+5. This is a dynamic and responsive website for laptop and mobile applications.
+
+Technology Stack
+Frontend:- React js, Typescript
+Backend:- Node js, Express js
+Database:- MongoDB
