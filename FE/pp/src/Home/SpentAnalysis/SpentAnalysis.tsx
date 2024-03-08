@@ -26,7 +26,7 @@ import {
   IconButton,
 } from "@mui/material";
 import axios, { spread } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { validateSpent } from "../Validations/validateSpent";
 import { Loading } from "../../Notification_and_Loading/Loading";
@@ -50,6 +50,10 @@ import { Add } from "@mui/icons-material";
 import CustomTextField from "../../CustomeTextfield";
 import { globalColors, globalbuttonstyle } from "../../styles/Colors";
 import { BASE_URL } from "../../constants";
+import DownloadButton from "../../Notification_and_Loading/LoadingButton";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { image } from "html2canvas/dist/types/css/types/image";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -85,6 +89,7 @@ export const SpentAnalysis = () => {
   const [savings, setSavings] = useState(0);
   const [callOnce, setCallOnce] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const pdfRef = useRef()
 
   const handleOpen = () => {
     setOpen(true);
@@ -240,6 +245,26 @@ export const SpentAnalysis = () => {
       </Box>
     );
   }
+  const DownloadPDF = async () => {
+    const input = pdfRef.current;
+    if (!input) return;
+
+    const canvas = await html2canvas(input);
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('l', 'mm', 'a4', true);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    // const imgX = (pdfWidth - imgWidth * ratio) / 2;
+    const imgX = 0;
+    const imgY = 0;
+
+    pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+    pdf.save(`SpentAnalysisRecord${Date.now()}.pdf`);
+  };
 
   return (
     <Box
@@ -247,6 +272,7 @@ export const SpentAnalysis = () => {
         padding: "2rem",
         marginTop: "4rem",
       }}
+      ref = {pdfRef}
     >
       <Box
         style={{
@@ -262,10 +288,14 @@ export const SpentAnalysis = () => {
         >
           Spent Analysis
         </Typography>
-
-        <IconButton onClick={handleOpen}>
-          <Add sx={{ fontSize: "2.5rem" }} />
-        </IconButton>
+        <Box>
+          <IconButton onClick={handleOpen}>
+            <Add sx={{ fontSize: "2.5rem" }} />
+          </IconButton>
+          <IconButton onClick={DownloadPDF}>
+            <DownloadButton />
+          </IconButton>
+        </Box>
       </Box>
       {/* </Paper> */}
 

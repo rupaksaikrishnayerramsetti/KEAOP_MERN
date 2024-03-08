@@ -93,6 +93,25 @@ async function handleChangePassword(req, res) {
     return res.send(false)
 }
 
+async function handleForgotPassword(req, res) {
+    const body = req.body
+    const userEmail = body.email
+    const user = await Users.find({email: userEmail})
+    if(user.length!=0){
+        const password = generatePassword()
+        const newpass = {
+            password_digest: hashPassword(password)
+        }
+        const result = await Users.findByIdAndUpdate(user[0]._id, newpass)
+        if(result){
+            const template = userCredentialsChangedTemplate(userEmail, password)
+            const sendmail = sendEmail(userEmail, "These are the updated user credentials for Keep Everything at One Place", template)
+            return res.send(true);
+        }
+    }
+    return res.send(false);
+}
+
 async function handleFetchTotalSalary(req, res) {
     const token = req.headers.authorization
     const data = JWTTokenData(token)
@@ -106,5 +125,6 @@ module.exports = {
     handleFetchUserDetails,
     handleUpdateUserData,
     handleChangePassword,
-    handleFetchTotalSalary
+    handleFetchTotalSalary,
+    handleForgotPassword
 }

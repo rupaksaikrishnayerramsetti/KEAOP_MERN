@@ -7,14 +7,16 @@ import {
   Box,
   IconButton,
   InputAdornment,
+  Modal,
+  Divider,
 } from "@mui/material";
-import { styles } from "./Landing.styles";
+import { styles, forgotPasswordModelStyle } from "./Landing.styles";
 import {
   LoginFormDataErrors,
   LoginFormDatatype,
   Loginflagpropstype,
 } from "./Landing.type";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { CloseSharp, Visibility, VisibilityOff } from "@mui/icons-material";
 import EmailIcon from "@mui/icons-material/Email";
 import { loginFormValidation } from "./Validations/validatedata";
 import axios from "axios";
@@ -23,11 +25,16 @@ import { useNavigate } from "react-router-dom";
 import CustomTextField from "../CustomeTextfield";
 import { globalbuttonstyle } from "../styles/Colors";
 import { BASE_URL } from "../constants";
+import { closeiconstyle } from "../Home/Note/Note.style";
 
 const Login = ({ setisloginflag, isloginflag }: Loginflagpropstype) => {
   const [showPassword, setShowPassword] = useState(false);
   const [inputErrors, setErrors] = useState<LoginFormDataErrors>({});
   const [isNotValid, setisNotValid] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [forgotPasswordFlag, setForgotPasswordFlag] = useState(false)
   const [formObj, setformObj] = useState<LoginFormDatatype>({
     email: "",
     password: "",
@@ -52,6 +59,47 @@ const Login = ({ setisloginflag, isloginflag }: Loginflagpropstype) => {
       console.log(error);
     }
   };
+
+  const ForgotPassword = async () => {
+    try{
+      const response = await axios.post(`${BASE_URL}/forgotPassword`, {"email":userEmail});
+      console.log(response.data)
+      if(response.data)
+      setForgotPasswordFlag(response.data)
+      else{
+        setisNotValid(true)
+      }
+      handleClose()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setUserEmail("");
+    setEmailError("");
+  };
+
+  const handleForgotPasswordSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    console.log(userEmail);
+    if(emailError===""){
+      ForgotPassword();
+    }
+  };
+
+  function handleForgotPasswordChange(e: {
+    preventDefault: () => void;
+    target: { name: any; value: any };
+  }) {
+    e.preventDefault();
+    let tempEmail = e.target.value;
+    setUserEmail(tempEmail)
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    setEmailError(!regex.test(tempEmail)?"Invalid Email format":"")
+  } 
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -90,6 +138,54 @@ const Login = ({ setisloginflag, isloginflag }: Loginflagpropstype) => {
           msg="Invalid Login Credentials"
           msgtype="error"
         />
+        <SnackbarNotification
+          flag={forgotPasswordFlag}
+          setflag={setForgotPasswordFlag}
+          msg="Your New Login Credentials are sent to your Mail"
+          msgtype="success"
+        />
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={forgotPasswordModelStyle}>
+            <IconButton sx={closeiconstyle}>
+              <CloseSharp onClick={handleClose} />
+            </IconButton>
+            <Typography variant="h6" component="h2">
+                Forgot Password
+              </Typography>
+              <Divider sx={{ my: 2 }} />
+              <form onSubmit={handleForgotPasswordSubmit}>
+                <TextField
+                fullWidth
+                type="search"
+                label="Email"
+                variant="outlined"
+                name="email"
+                value={userEmail}
+                placeholder="Enter your Registered Mail"
+                onChange={handleForgotPasswordChange}
+                error={emailError!==""}
+                helperText={emailError || ""}
+                margin="normal"
+                required
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <EmailIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                />
+                <Button type="submit" variant="contained" sx={globalbuttonstyle}>
+                  Submit
+                </Button>
+              </form>
+            </Box>
+          </Modal>
         <Typography component="h1" variant="h3" sx={styles.heading}>
           Login
         </Typography>
@@ -159,6 +255,17 @@ const Login = ({ setisloginflag, isloginflag }: Loginflagpropstype) => {
             }}
           >
             Create Account
+          </Button>
+        </Typography>
+        <Typography component="h1" variant="h6">
+          Click here if you 
+        <Button
+            variant="text"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Forgot Password ?
           </Button>
         </Typography>
       </Box>

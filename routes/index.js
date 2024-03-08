@@ -6,7 +6,8 @@ const {
     handleFetchUserDetails,
     handleUpdateUserData,
     handleChangePassword,
-    handleFetchTotalSalary
+    handleFetchTotalSalary,
+    handleForgotPassword
 } = require("../controllers/Users")
 const {
     handleCreateNote,
@@ -36,6 +37,7 @@ router.get("/fetchUserDetails", handleFetchUserDetails)
 router.post("/updateUserData", handleUpdateUserData)
 router.post("/changePassword", handleChangePassword)
 router.get("/fetchTotalSalary", handleFetchTotalSalary)
+router.post("/forgotPassword", handleForgotPassword)
 
 // Routes for Notes
 router.post("/createNote", handleCreateNote)
