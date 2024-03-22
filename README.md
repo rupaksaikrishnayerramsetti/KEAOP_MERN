@@ -1,4 +1,4 @@
-# KEAOP_MERN
+# KEAOP MERN
 Implementation of Keep Everything at One Place project using MERN stack
 
 This is the drive link for the video recording of the manager-level conference 
